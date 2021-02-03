@@ -1,7 +1,8 @@
 const cors = require("cors");
 const express = require("express");
 const stripe = require("stripe")("sk_test_51IGZ6EJWDBULoxk2uuMjRPuLbFPQElMNi3CQOmzEJidtfrNHx9FdckquwutTLyEYWQUOWsYLGaBACOQGQel7xbX900Wa9ONOEP");
-const uuid = require("uuid");
+const { uuid } = require('uuidv4');
+
 
 const app = express(); //make express app
 
@@ -21,10 +22,10 @@ app.post("/checkout", async (req, res) => {
 
     try {
 
-        const { product, token } = req.body;
-       
+        const { token, sum, length } = req.body;
+
         //create customer
-        const customer = await stripe.customer.create({
+        const customer = await stripe.customers.create({
             email: token.email,
             source: token.id
         });
@@ -32,12 +33,12 @@ app.post("/checkout", async (req, res) => {
         const idempotency_key = uuid();
 
         //create charge
-        const charge = await stripe.charge.create({
-            amount: getTotalSum * 100,
+        const charge = await stripe.charges.create({
+            amount: sum,
             currency: "usd",
             customer: customer.id,
             receipt_email: token.email,
-            description: `Purchased ${cart.length} Products`,
+            description: `Purchased ${length}  Products`,
             shipping: {
                 name: token.card.name,
                 address: {
