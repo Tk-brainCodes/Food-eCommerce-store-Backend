@@ -5,6 +5,8 @@ const { v4: uuidv4 } = require('uuid');
 
 const app = express();
 
+const port = process.env.PORT;
+
 app.use(express.json());
 app.use(cors());
 
@@ -58,4 +60,4 @@ app.post("/checkout", async (req, res) => {
     res.json({ error, status });
 });
 
-app.listen(8080);
+app.listen(port);
